@@ -1,5 +1,7 @@
+const { response } = require("express");
 var express = require("express");
 var rp = require("request-promise");
+var mapResponse = require("./map-response");
 
 var app = express();
 
@@ -10,12 +12,13 @@ app.post("/orders", function (req, res) {
   let vtex = montaBodyVtex(req.body.OrderId);
   rp.get(vtex)
     .then(function (order) {
-      let reqAddtocart = montaBodyAddToCart(order);
+      let response = mapResponse(order);
+      let reqAddtocart = montaBodyAddToCart(response);
       return rp.post(reqAddtocart);
     })
     .then(function (cart) {
       console.log("order", cart);
-      let reqCheckout = montaBodyCheckout(cart);
+      let reqCheckout = montaBodyCheckout(JSON.parse(cart));
       return rp.post(reqCheckout);
     })
     .then(function (result) {})
@@ -51,13 +54,13 @@ function montaBodyVtex(order) {
   return options;
 }
 
-function montaBodyAddToCart() {
+function montaBodyAddToCart(data) {
   let body = "";
   body = `{
             "service": 1,
             "agency": 49,
             "from": {
-                "name": "Nome do remetente",
+                "name": "Devs",
                 "phone": "53984470102",
                 "email": "contato@melhorenvio.com.br",
                 "document": "16571478358",
@@ -72,35 +75,8 @@ function montaBodyAddToCart() {
                 "postal_code": "01002001",
                 "note": "observação"
             },
-            "to": {
-                "name": "Nome do destinatário",
-                "phone": "53984470102",
-                "email": "contato@melhorenvio.com.br",
-                "document": "25404918047",
-                "company_document": "89794131000101",
-                "state_register": "123456",
-                "address": "Endereço do destinatário",
-                "complement": "Complemento",
-                "number": "2",
-                "district": "Bairro",
-                "city": "Porto Alegre",
-                "state_abbr": "RS",
-                "country_id": "BR",
-                "postal_code": "90570020",
-                "note": "observação"
-            },
-            "products": [
-                {
-                    "name": "Papel adesivo para etiquetas 1",
-                    "quantity": 3,
-                    "unitary_value": 1000
-                },
-                {
-                    "name": "Papel adesivo para etiquetas 2",
-                    "quantity": 1,
-                    "unitary_value": 1000
-                }
-            ],
+            "to": ${JSON.stringify(data.client)},
+            "products": ${JSON.stringify(data.products)},
             "volumes": [
                 {
                     "height": 15,
@@ -147,7 +123,7 @@ function montaBodyCheckout(cart) {
   let body;
   body = `{
     "orders": [
-        "${cart.cartid}"
+        "${cart.id}"
     ]
   }`;
 
