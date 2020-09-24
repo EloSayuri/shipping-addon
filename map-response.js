@@ -9,6 +9,20 @@ module.exports = (resp) => {
     }
   });
 
+  const volumes = resp.items.additionalInfo === undefined ? [{
+    height: 15,
+    width: 20,
+    length: 10,
+    weight: 3
+  }] : resp.items.additionalInfo.dimension.map((volume) => {
+    return {
+        height: volume.height,
+        width: volume.width,
+        length: volume.length,
+        weight: volume.weight,
+    }
+  });
+
   return {
     orderId: resp.orderId,
     client : {
@@ -17,7 +31,7 @@ module.exports = (resp) => {
       email: resp.clientProfileData.email,
       document: resp.clientProfileData.document,
       company_document: resp.clientProfileData.corporateDocument,
-      state_register: 123456,
+      state_register: resp.clientProfileData.stateInscription,
       address: resp.shippingData.address.street,
       complement: resp.shippingData.address.complement,
       number: resp.shippingData.address.number,
@@ -28,7 +42,8 @@ module.exports = (resp) => {
       postal_code: resp.shippingData.address.postalCode,
       note: resp.shippingData.address.reference
     },
-    products
+    products,
+    volumes
   }   
   
 }

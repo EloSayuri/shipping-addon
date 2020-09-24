@@ -60,7 +60,7 @@ function montaBodyAddToCart(data) {
             "service": 1,
             "agency": 49,
             "from": {
-                "name": "Devs",
+                "name": "Devs e Furiosos",
                 "phone": "53984470102",
                 "email": "contato@melhorenvio.com.br",
                 "document": "16571478358",
@@ -77,14 +77,7 @@ function montaBodyAddToCart(data) {
             },
             "to": ${JSON.stringify(data.client)},
             "products": ${JSON.stringify(data.products)},
-            "volumes": [
-                {
-                    "height": 15,
-                    "width": 20,
-                    "length": 10,
-                    "weight": 3
-                }
-            ],
+            "volumes": ${JSON.stringify(data.volumes)},
             "options": {
                 "insurance_value": 0,
                 "receipt": false,
@@ -97,7 +90,7 @@ function montaBodyAddToCart(data) {
                 "platform": "VTEX",
                 "tags": [
                     {
-                        "tag": "Identificação do pedido na plataforma, exemplo: 1000007",
+                        "tag": ${JSON.stringify(data.orderId)},
                         "url": "Link direto para o pedido na plataforma, se possível, caso contrário pode ser passado o valor null"
                     }
                 ]
