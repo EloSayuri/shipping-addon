@@ -59,7 +59,7 @@ function montaBodyVtex(order) {
 function montaBodyAddToCart(data) {
   let body = "";
   body = `{
-            "service": 1,
+            "service": 2,
             "agency": 49,
             "from": {
                 "name": "Devs e Furiosos",
